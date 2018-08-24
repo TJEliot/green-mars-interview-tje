@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="/static/css/metrics.css">
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+        <script type= "text/javascript" src="./static/metrics.js"></script>
+        <script type= "text/javascript" src="./static/performance.js"></script>
+        <script type= "text/javascript" src="./static/ease.js"></script>
+    </head>
+    <body>
+        <div id="clinic-select">
+            <input type="radio" name="clinic_selected" value="all" checked="checked" /> All Clinics
+            <input type="radio" name="clinic_selected" value="Institution-0005" /> UCSF
+            <input type="radio" name="clinic_selected" value="Institution-0006" /> Brigham
+            <input type="radio" name="clinic_selected" value="Institution-0008" /> HLCC
+        </div>
+        <div id="overview-subtabs">
+            <ul>
+                <li class="active"><a href="#overview-chm">Customer Health Measurements</a></li>
+                <li><a href="#overview-eou">Ease of Use/Customer Satisfaction</a></li>
+                <li><a href="#overview-spm">Software Performance Measurement</a></li>
+            </ul>
+            <div id="overview-chm">
+               <div id="clinicsPatients" class="left"></div>
+               <div id="treated" class="right"></div>
+               <div id="userRoleUsage"></div>
+            </div>
+            <div id="overview-eou">
+                <table>
+                <tr>
+                <td>
+                <div id="weights"></div>
+                </td>
+                <td>
+                <div id="changes"></div>
+                </td>
+                </tr>
+                </table>
+            </div>
+            <div id="overview-spm">
+                <table>
+                <tr>
+                <td>
+                <div id="improvementAttempts"></div>
+                </td>
+                <td>
+                <div id="dissimilarity"></div>
+                </td>
+                </tr>
+                </table>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $('input[name="clinic_selected"]').on("change", function(){
+                    var clinic_val = $(this).val();
+                    console.log("Clinic selected: ", clinic_val);
+                    plotUserRoleUsage(clinic_val);
+                    plotPatientTypesProcessed(clinic_val);
+                    plotImprovementAttempts(clinic_val);
+                    plotWeightChanges(clinic_val);
+                    plotPatientsTreated(clinic_val);
+                    plotAverageChanges(clinic_val);
+                    plotMatchDissimilarity(clinic_val);
+                });
+                $("#top-tabs").tabs();
+                $("#overview-subtabs").tabs();
+                
+                // Initial clinic val
+                var init_clinic_val = $('input[name="clinic_selected"]').val();
+                plotUserRoleUsage(init_clinic_val);
+                plotPatientTypesProcessed(init_clinic_val);
+                plotImprovementAttempts(init_clinic_val);
+                plotWeightChanges(init_clinic_val);
+                plotPatientsTreated(init_clinic_val);
+                plotAverageChanges(init_clinic_val);
+                plotMatchDissimilarity(init_clinic_val);
+            });
+        </script>
+    </body>
+</html>
