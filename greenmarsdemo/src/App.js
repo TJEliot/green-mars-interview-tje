@@ -47,10 +47,9 @@ class App extends Component {
             displayNumberOfWeightChangesPerAnatomicalSiteDiv: "blank",
             displayNumberOfAttemptsOnAverageToImproveAConstantDiv: "blank",
             displayAverageDissimilarityAcrossMatchesAvailableDiv: "blank",
-            UCSF: true, //boolean,
-            HLCC: true, //boolean,
-            Brigham: true, //boolean,
-            // we don't need an "all" setting to display HLCC, UCSF, and Brigham, just set them all to true
+            UCSF: true, 
+            HLCC: true, 
+            Brigham: true, 
             }
         this.onClick1 = this.onClick1.bind(this);
         this.onClick2 = this.onClick2.bind(this);
@@ -60,13 +59,12 @@ class App extends Component {
         this.onClickBrigham = this.onClickBrigham.bind(this);
         this.onClickHLCC = this.onClickHLCC.bind(this);
         this.displayNumberAndTypeOfPatientsTreatedPerDay = this.displayNumberAndTypeOfPatientsTreatedPerDay.bind(this);
+        this.displayTypeOfUser = this.displayTypeOfUser.bind(this);
+        this.displayNumberOfTimesWeightsAreChanged = this.displayNumberOfTimesWeightsAreChanged.bind(this);
+        this.displayNumberOfWeightChangesPerAnatomicalSite = this.displayNumberOfWeightChangesPerAnatomicalSite.bind(this);
+        this.displayNumberOfAttemptsOnAverageToImproveAConstant = this.displayNumberOfAttemptsOnAverageToImproveAConstant.bind(this);
+        this.displayAverageDissimilarityAcrossMatchesAvailable = this.displayAverageDissimilarityAcrossMatchesAvailable.bind(this);
     }
-    // includeClinicRow(row, clinic) {
-    //     if(clinic === "all" || clinic===row['org_name']){
-    //         let org_name = row['org_name'];
-    //         return true;
-    //     }
-    // }
 
     testMaker() {
         var myTest = JSON.stringify(this.state.UCSF)
@@ -144,10 +142,78 @@ class App extends Component {
                 type: 'bar'
               }
             ]}
-            layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
+            layout={ {width: 320, height: 240, title: 'Number and Type of Patients Treated Per Day'} }
           /></div>
         );
     }
+
+    displayTypeOfUser() {
+        return (<div>
+                  <Plot
+                    data={[
+                      {
+                        labels: ['CMD', 'MD', 'PhD', 'Other'],
+                        values: [28.6, 28.6, 28.6, 14.3],
+                        type: 'pie'
+                      }
+                    ]}
+                    layout={ {width: 320, height: 240, title: 'Type of User'} }
+                  /></div>
+                );
+    }
+
+    displayNumberOfTimesWeightsAreChanged() {
+        return (<div>
+          <Plot
+            data={[
+              {
+                x: [1, 2, 3],
+                y: [2, 6, 3],
+                type: 'bar'
+              }
+            ]}
+            layout={ {width: 320, height: 240, title: 'Number of Times Weights are Changed'} }
+          /></div>
+        );}
+    displayNumberOfWeightChangesPerAnatomicalSite() {
+        return (<div>
+          <Plot
+            data={[
+              {
+                x: [1, 2, 3],
+                y: [2, 6, 3],
+                type: 'bar'
+              }
+            ]}
+            layout={ {width: 320, height: 240, title: 'Number of Weights Changed per anatomical site'} }
+          /></div>
+        );}
+    displayNumberOfAttemptsOnAverageToImproveAConstant() {
+        return (<div>
+          <Plot
+            data={[
+              {
+                x: [1, 2, 3],
+                y: [2, 6, 3],
+                type: 'bar'
+              }
+            ]}
+            layout={ {width: 320, height: 240, title: 'Number of Attempts on Average to Improve a Constant'} }
+          /></div>
+        );}
+    displayAverageDissimilarityAcrossMatchesAvailable() {
+        return (<div>
+          <Plot
+            data={[
+              {
+                x: [1, 2, 3],
+                y: [2, 6, 3],
+                type: 'bar'
+              }
+            ]}
+            layout={ {width: 320, height: 240, title: 'Average Dissimilarty Across Matches Available'} }
+          /></div>
+        );}
 
 
 /*okay, we need a few different functions. What I want to do is something like
@@ -266,13 +332,13 @@ class App extends Component {
                 <button onClick={this.onClick3}>Software Performance Measurement</button>
                 <div>
                 </div>
-                <div id="numberAndTypeOfPatientsProcessedPerClinicDiv" className={this.state.displayNumberAndTypeOfPatientsTreatedPerDayDiv}>{this.displayNumberAndTypeOfPatientsTreatedPerDay()}</div>
-                <div id="numberAndTypeOfPatientsTreatedPerDayDiv" className={this.state.displayTypeOfUserDiv}>2 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
-                <div id="typeOfUserDiv" className={this.state.displayNumberOfTimesWeightsAreChangedDiv}>3 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)} </div>
-                <div id="numberOfTimesWeightsAreChangedDiv" className={this.state.displayNumberOfTimesWeightsAreChangedDiv}>4 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
-                <div id="numberOfWeightChangesPerAnatomicalSiteDiv" className={this.state.displayNumberOfWeightChangesPerAnatomicalSiteDiv}>5 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
-                <div id="numberOfAttemptsOnAverageToImproveAConstantDiv" className={this.state.displayNumberOfAttemptsOnAverageToImproveAConstantDiv}>6 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
-                <div id="averageDissimilarityAcrossMatchesAvailableDiv" className={this.state.displayAverageDissimilarityAcrossMatchesAvailableDiv}>7 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>    
+                <div id="numberAndTypeOfPatientsProcessedPerClinicDiv" className={this.state.displayNumberAndTypeOfPatientsTreatedPerDayDiv}>{this.displayNumberAndTypeOfPatientsTreatedPerDay()} 1 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="numberAndTypeOfPatientsTreatedPerDayDiv" className={this.state.displayTypeOfUserDiv}>{this.displayTypeOfUser()}2 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="typeOfUserDiv" className={this.state.displayNumberOfTimesWeightsAreChangedDiv}>{this.displayNumberOfTimesWeightsAreChanged()}3 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)} </div>
+                <div id="numberOfTimesWeightsAreChangedDiv" className={this.state.displayNumberOfTimesWeightsAreChangedDiv}>{this.displayNumberOfTimesWeightsAreChanged()}4 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="numberOfWeightChangesPerAnatomicalSiteDiv" className={this.state.displayNumberOfWeightChangesPerAnatomicalSiteDiv}>{this.displayNumberOfWeightChangesPerAnatomicalSite()}5 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="numberOfAttemptsOnAverageToImproveAConstantDiv" className={this.state.displayNumberOfAttemptsOnAverageToImproveAConstantDiv}>{this.displayNumberOfAttemptsOnAverageToImproveAConstant()}6 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="averageDissimilarityAcrossMatchesAvailableDiv" className={this.state.displayAverageDissimilarityAcrossMatchesAvailableDiv}>{this.displayAverageDissimilarityAcrossMatchesAvailable()}7 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>    
             </div>
         )
      }
