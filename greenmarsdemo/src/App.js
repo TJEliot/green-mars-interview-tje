@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import ReactDOM from "react-dom";
 import $ from 'jquery';
 import Plotly from 'react-plotly.js';
+import Plot from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory'
 import './metrics.css';
 import Papa from 'papaparse';
 
 
-const Plot = createPlotlyComponent(Plotly);
+// const Plot = createPlotlyComponent(Plotly);
 
         // <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         // <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -30,480 +31,251 @@ Papa.parse(myCSV, {
   header: true,
   complete: function(results) {
     myValues = results;
+    console.dir(myValues);
   }
 })
 
-// Papa.parse('./static/data/clinic_aggregate_metrics.csv',  {
-//   header: true,
-//   download: true,
-//   complete: function(results) {
-//     console.dir('here is the csv file, supposedly');
-//     console.dir(JSON.stringify(results.data));
-//     // data = results.data;
-//   }
-// });
 
 class App extends Component {
-  //performance metrics page
- includeClinicRow(row, clinic) {
-    if(clinic === "all" || clinic===row['org_name']){
-        let org_name = row['org_name'];
-        return true;
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayNumberAndTypeOfPatientsProcessedPerClinicDiv: "visible",
+            displayNumberAndTypeOfPatientsTreatedPerDayDiv: "visible",
+            displayTypeOfUserDiv: "visible",
+            displayNumberOfTimesWeightsAreChangedDiv: "blank",
+            displayNumberOfWeightChangesPerAnatomicalSiteDiv: "blank",
+            displayNumberOfAttemptsOnAverageToImproveAConstantDiv: "blank",
+            displayAverageDissimilarityAcrossMatchesAvailableDiv: "blank",
+            UCSF: true, //boolean,
+            HLCC: true, //boolean,
+            Brigham: true, //boolean,
+            // we don't need an "all" setting to display HLCC, UCSF, and Brigham, just set them all to true
+            }
+        this.onClick1 = this.onClick1.bind(this);
+        this.onClick2 = this.onClick2.bind(this);
+        this.onClick3 = this.onClick3.bind(this);
+        this.onClickAll = this.onClickAll.bind(this);
+        this.onClickUCSF = this.onClickUCSF.bind(this);
+        this.onClickBrigham = this.onClickBrigham.bind(this);
+        this.onClickHLCC = this.onClickHLCC.bind(this);
+        this.displayNumberAndTypeOfPatientsTreatedPerDay = this.displayNumberAndTypeOfPatientsTreatedPerDay.bind(this);
     }
-  }
+    // includeClinicRow(row, clinic) {
+    //     if(clinic === "all" || clinic===row['org_name']){
+    //         let org_name = row['org_name'];
+    //         return true;
+    //     }
+    // }
 
- plotMatchDissimilarity(clinic_val) {
-    Plot.d3(myValues, (err,rows) => {
-      var layout = {
-        title: "Average dissimilarity across matches available"
-      };
+    testMaker() {
+        var myTest = JSON.stringify(this.state.UCSF)
+        return (
+            <h1>{myTest}</h1>
+        )
+    }
 
-      var xValue = [];
-      var yValue = [];
-
-        if (rows === undefined) {
-            rows = [];
+    onClick1() {
+            this.setState({displayNumberAndTypeOfPatientsProcessedPerClinicDiv: "visible",
+                    displayNumberAndTypeOfPatientsTreatedPerDayDiv: "visible",
+                    displayTypeOfUserDiv: "visible",
+                    displayNumberOfTimesWeightsAreChangedDiv: "blank",
+                    displayNumberOfWeightChangesPerAnatomicalSiteDiv: "blank",
+                    displayNumberOfAttemptsOnAverageToImproveAConstantDiv: "blank",
+                    displayAverageDissimilarityAcrossMatchesAvailableDiv: "blank"})
         }
-      rows.forEach(function(row){
-       if(this.includeClinicRow(row, clinic_val)){
-            xValue.push(row.average_match_dissimilarity),
-            yValue.push(row.patients_processed_count)
+
+
+    onClick2() {
+            this.setState({displayNumberAndTypeOfPatientsProcessedPerClinicDiv: "blank",
+                                displayNumberAndTypeOfPatientsTreatedPerDayDiv: "blank",
+                                displayTypeOfUserDiv: "blank",
+                                displayNumberOfTimesWeightsAreChangedDiv: "visible",
+                                displayNumberOfWeightChangesPerAnatomicalSiteDiv: "visible",
+                                displayNumberOfAttemptsOnAverageToImproveAConstantDiv: "blank",
+                                displayAverageDissimilarityAcrossMatchesAvailableDiv: "blank"})
+        } 
+
+    onClick3() {
+            this.setState({displayNumberAndTypeOfPatientsProcessedPerClinicDiv: "blank",
+                                displayNumberAndTypeOfPatientsTreatedPerDayDiv: "blank",
+                                displayTypeOfUserDiv: "blank",
+                                displayNumberOfTimesWeightsAreChangedDiv: "blank",
+                                displayNumberOfWeightChangesPerAnatomicalSiteDiv: "blank",
+                                displayNumberOfAttemptsOnAverageToImproveAConstantDiv: "visible",
+                                displayAverageDissimilarityAcrossMatchesAvailableDiv: "visible"})
         }
+    onClickAll() {
+        this.setState({
+            UCSF: true,
+            Brigham: true,
+            HLCC: true
         })
-        var trace1 = {
-            x: xValue,
-            y: yValue,
-            type: 'scatter'
-        };
-        var data=[trace1];
-        Plotly.newPlot('dissimilarity', data, layout);
-})
-}
-
- plotImprovementAttempts(clinic_val) {
-    Plot.d3(myValues, (err,rows) => {
-        var layout = {
-            title: "Number of attempts on average to improve a constraint"
-        };
-
-        var xValue = [];
-        var yValue = [];
-
-        if (rows === undefined) {
-            rows = [];
-        }
-        rows.forEach(function(row){
-         if(this.includeClinicRow(row, clinic_val)){
-                xValue.push(row.date),
-                yValue.push(row.improvement_values)
-          }
-          })
-          var data = [{
-                    type: 'bar',
-                    hoverinfo: 'none',
-                    x: xValue,
-                    y: yValue
-           }];
-           Plot.newPlot('improvementAttempts', data, layout);
-    })
-}
-
-  plotWeightChanges(clinic_val) {
-    Plot.d3(myValues, (err,rows) => {
-        var layout = {
-            title: 'Number of times weights are changed',
-            barmode: 'stack'
-        };
-
-        var siteIndices = {'HN': 0, 'L': 1, 'P': 2};
-
-        var xValue = ['HN', 'L', 'P'];
-        var saved = [0, 0, 0];
-        var notSaved = [0, 0, 0];
-        if (rows === undefined) {
-            rows = [];
-        }
-
-        rows.forEach(function(row){
-          if(this.includeClinicRow(row, clinic_val)){
-            xValue.forEach(function(anatomical_site){
-                var siteIndex = siteIndices[anatomical_site];
-                saved[siteIndex] += parseInt(row[anatomical_site+'_weight_changed_saved']);
-                notSaved[siteIndex] += parseInt(row[anatomical_site+'_weight_changed_not_saved']);
-            });
-        }});
-        
-        var savedWeights = {
-            x: xValue,
-            y: saved,
-            type: 'bar',
-            text: saved,
-            textposition: 'auto',
-            name: "Saved Weights",
-            hoverinfo: 'none'
-        };
-        
-        var notSavedWeights = {
-            x: xValue,
-            y: notSaved,
-            type: 'bar',
-            text: notSaved,
-            textposition: 'auto',
-            name: "Unsaved Weights",
-            hoverinfo: 'none',
-              marker: {
-                    color: 'rgb(0,153,255)'
-                }
-        };
-
-        var data = [savedWeights, notSavedWeights];
-        Plot.newPlot('weights', data, layout);
-     });
-}
-
-
-
- plotAverageChanges(clinic_val) {
-    Plot.d3(myValues, (err,rows) => {
-        var layout = {
-            title: 'Average number of weights changed per anatomical site'
-        };
-        var noOfChanges = [0, 0, 0];
-        var xValue = ['HN', 'L', 'P'];
-        var siteIndices = {'HN': 0, 'L': 1, 'P': 2};
-        if (rows === undefined) {
-            rows = [];
-        }
-
-        rows.forEach(function(row){
-           if(this.includeClinicRow(row, clinic_val)){
-            xValue.forEach(function(anatomical_site){
-                var siteIndex = siteIndices[anatomical_site];
-                noOfChanges[siteIndex] += parseInt(row[anatomical_site+'_average_weight_change']);
-            });
-        }});
-        var changed = {
-            x: xValue,
-            y: noOfChanges,
-            type: 'bar',
-            textposition: 'auto',
-            hoverinfo: 'none'
-        };
-
-        var data = [changed]
-        Plot.newPlot('changes', data, layout);
-    });
-}
-
- plotUserRoleUsage(clinic_val) {
-    Plot.d3(myValues, (err,rows) => {
-        var layoutPie = {
-            title: 'Type of User',
-            height: 400,
-            width: 500
-        };
-        if (rows === undefined) {
-            rows = [];
-        }
-        var roleIndices = {'CMD': 0, 'MD': 1, 'PhD': 2, 'Other': 3};
-        var roles = Object.keys(roleIndices);
-        var roleSums = [0, 0, 0, 0];
-
-        rows.forEach(function(row){
-        if(this.includeClinicRow(row, clinic_val)){
-            let roleIndex = roleIndices[row.user];
-            roleSums[roleIndex] += 1;
-            }
+    }
+    onClickUCSF(){
+        this.setState({
+            UCSF: true,
+            Brigham: false,
+            HLCC: false
         })
+    }
+    onClickBrigham(){
+        this.setState({
+            UCSF: false,
+            Brigham: true,
+            HLCC: false
+        })
+    }
+    onClickHLCC(){
+        this.setState({
+            UCSF: false,
+            Brigham: false,
+            HLCC: true
+        })
+    }
+    
+    displayNumberAndTypeOfPatientsTreatedPerDay() {
+        return (<div>
+          <Plot
+            data={[
+              {
+                x: [1, 2, 3],
+                y: [2, 6, 3],
+                type: 'bar'
+              }
+            ]}
+            layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
+          /></div>
+        );
+    }
 
-        var dataPie = [{
-            labels: roles,
-            values: roleSums,
-            type: 'pie',
-            marker: {
-                colors: ['rgb(0,153,255)', 'rgba(58, 200, 225, .5)', 'rgb(158, 202, 225)']
 
-            }
-        }];
+/*okay, we need a few different functions. What I want to do is something like
+    create a state for the app which stores the options for what to display, so 
+    that when we press a button, we change the state, which then automatically 
+    updates the displayed data. So what options do we have for what we want to display?
+    update: okay, made the state (see above), made the buttons (see below for the buttons
+    themselves, see above for functionality), and made the schema for the graphs (see this comment below)
 
-
-        Plot.newPlot('userRoleUsage', dataPie, layoutPie);
-    });
-}
-
- plotPatientsTreated(clinic_val){
-        Plot.d3(myValues, (err, rows) => {
+    Customer Health Measurements:
+        Number and Type of Patients processed per clinic
+            var data = [{
+                x: [dates pulled from the CSV],
+                y: [range 0 to max of data],
+                type: 'bar'
+              }]
+          Plotly.newPlot('numberAndTypeOfPatientsProcessedPerClinicDiv', data);
+        Number and Type of Patients Treated per day
+            var traceHeadNeck = {
+                x: [dates pulled from the CSV],
+                y: [range 0 to max of data],
+                name: "Head and Neck",
+                type: 'bar'
+            };
+            var traceLung = {
+                x: [dates pulled from the CSV],
+                y: [range 0 to max of data],
+                name: "Lung",
+                type: 'bar'
+            };
+            var traceProstate = {
+                x: [dates pulled from the CSV],
+                y: [range 0 to max of data],
+                name: "Prostate",
+                type: 'bar'
+            };
+            var data = [traceHeadNeck, traceLung, traceProstate]
+            var layout = {barmode: 'stack'};
+            Plotly.newPlot('numberAndTypeOfPatientsTreatedPerDayDiv', data);
+        Type of User
+            var data = [{
+                values: [taken from the CSV]
+                labels: ['CMD', 'MD', 'Other', 'PhD']
+                type: 'pie'
+            }];
             var layout = {
-                title: 'Number and Type of Patient Treated per day',
-                barmode: 'stack'
+                height: 400,
+                width: 500
             };
-            var xValue = [];
-            var hnValue = [];
-            var pValue = [];
-            var lValue = [];
-        if (rows === undefined) {
-            rows = [];
-        }
-            rows.forEach(function(row){
-               if (this.includeClinicRow(row, clinic_val)){
-                xValue.push(row.date);
-                hnValue.push(row.anatomical_site_HN_count);
-                pValue.push(row.anatomical_site_P_count);
-                lValue.push(row.anatomical_site_L_count);
+            Plotly.newPlot('typeOfUserDiv', data, layout);
+
+    Ease of Use/Customer Satisfaction
+        Number of times weights are changed
+            var traceUnsavedWeights = {
+                x: ['HN', 'L', 'P'],
+                y: [data taken from CSV],
+                name: 'Unsaved Weights',
+                type: 'bar'
             }
-          })
-
-            var Prostate = {
-                x: xValue,
-                y: pValue,
-                type: 'bar',
-                text: pValue,
-                textposition: 'auto',
-                name: "Prostate",
-                hoverinfo: 'none',
-                marker: {
-                    color: 'rgba(58, 200, 225, .5)'
-                }
-            };
-            var Lung = {
-                x: xValue,
-                y: lValue,
-                type: 'bar',
-                text: lValue,
-                textposition: 'auto',
-                name: "Lung",
-                hoverinfo: 'none',
-                marker: {
-                 color: 'rgb(158, 202, 225)'
-                }
-            };
-            var headAndNeck = {
-                x: xValue,
-                y: hnValue,
-                type: 'bar',
-                text: hnValue,
-                textposition: 'auto',
-                name: "Head & Neck",
-                hoverinfo: 'none',
-                marker: {
-                    color: 'rgb(0,153,255)'
-                }
-            };
-            var data = [Prostate, Lung, headAndNeck];
-            Plot.newPlot('treated', data, layout);
-         });
-}
-
-
-
-
- plotPatientTypesProcessed(clinic_val){
-    Plot.d3(myValues, (err,rows) => {
-        var layoutProcessed = {
-            title: 'Number and Type of patient processed per clinic',
-            barmode: 'stack'
-        };
-        var xValue = [];
-        var hnValue = [];
-        var pValue = [];
-        var lValue = [];
-
-        if (rows === undefined) {
-            rows = [];
-        }
-        rows.forEach(function(row){
-           if(this.includeClinicRow(row, clinic_val)){
-            xValue.push(row.org_name);
-            hnValue.push(row.anatomical_site_HN_count);
-            pValue.push(row.anatomical_site_P_count);
-            lValue.push(row.anatomical_site_L_count);
-           }
-         })
-
-
-        function unique(value, index, self) {
-            return self.indexOf(value) === index
+            var traceSavedWeights = {
+                x: ['HN', 'L', 'P'],
+                y: [data taken from CSV].
+                name: 'Saved Weights',
+                type: 'bar'
             }
+            var data = [traceUnsavedWeights, traceSavedWeights];
+            Plotly.newPlot('numberOfTimesWeightsAreChangedDiv', data);
+        Average number of weight changes per anatomical site
+            var data = [{
+                x: ['HN', 'L', 'P'],
+                y: [data pulled from CSV]
+                type: 'bar'
+            }]
+            Plotly.newPlot('numberOfWeightChangesPerAnatomicalSiteDiv', data);
 
-        var xV = xValue.filter(unique);
-        var site = ['HN', 'L', 'P'];
-        var numP = [];
-        var numL = [];
-        var numHN = [];
-        var counter = 0;
-        var siteIndices = {};
-        xV.forEach(function(inst) {
-            numHN.push(0);
-            numL.push(0);
-            numP.push(0);
-            siteIndices[inst] = counter;
-            counter+=1;
-        });
-
-        rows.forEach(function(row){
-           if(this.includeClinicRow(row, clinic_val)){
-                var siteIndex = siteIndices[row['org_name']];
-
-                numHN[siteIndex] += parseInt(row['anatomical_site_HN_count']);
-                numL[siteIndex] += parseInt(row['anatomical_site_L_count']);
-                numP[siteIndex] += parseInt(row['anatomical_site_P_count']);
-        }});
-
-         var Prostate = {
-                x: xV,
-                y: numP,
-                type: 'bar',
-                text: numP,
-                textposition: 'auto',
-                name: "Prostate",
-                hoverinfo: 'none',
-                marker: {
-                    color: 'rgba(58, 200, 225, .5)'
-                }
-            };
-         var Lung = {
-                x: xV,
-                y: numL,
-                type: 'bar',
-                text: numL,
-                textposition: 'auto',
-                name: "Lung",
-                hoverinfo: 'none',
-                marker: {
-                 color: 'rgb(158, 202, 225)'
-                }
-          };
-
-          var headAndNeck = {
-                x: xV,
-                y: numHN,
-                type: 'bar',
-                text: numHN,
-                textposition: 'auto',
-                name: "Head & Neck",
-                hoverinfo: 'none',
-                marker: {
-                    color: 'rgb(0,153,255)'
-                }
-          };
-          var dataProcessed = [Prostate, Lung, headAndNeck];
-          Plot.newPlot('clinicsPatients', dataProcessed, layoutProcessed);
-    });
-}
+    Software Performance Measurement
+        Number of attempts on average to improve a constant
+            var data = [{
+                x: [data pulled from CSV],
+                y: [data pulled from CSV],
+                type: 'bar'
+            }]
+            Plotly.newPlot('numberOfAttemptsOnAverageToImproveAConstantDiv', data);
+        Average dissimilarity across matches available
+            var trace1 = [{
+                x: [data pulled from CSV], //there are two lines but they aren't labeled so idk what their deal is
+                y: [data pulled from CSV],
+                type: 'line'
+            }]
+            var trace2 = [{
+                x: [data pulled from CSV], //this is for the second line, idk what its deal is
+                y: [data pulled from CSV],
+                type: 'line'
+            }]
+            var data = [trace1, trace2];
+            Plotly.newPlot('averageDissimilarityAcrossMatchesAvailableDiv', data);
+    and orthoganally to the above, we can display data from
+        UCSF
+        Brigham
+        HLCC
+        All Clinics
+    which will affect the 'data pulled from CSV' variables listed above, and nothing else I do believe    
+*/
 
 
-
-  componentDidMount(){
-                $('input[name="clinic_selected"]').on("change", function(){
-                    var clinic_val = $(this).val();
-                    console.log("Clinic selected: ", clinic_val);
-                    this.plotUserRoleUsage(clinic_val);
-                    this.plotPatientTypesProcessed(clinic_val);
-                    this.plotImprovementAttempts(clinic_val);
-                    this.plotWeightChanges(clinic_val);
-                    this.plotPatientsTreated(clinic_val);
-                    this.plotAverageChanges(clinic_val);
-                    this.plotMatchDissimilarity(clinic_val);
-                });
-                // $("#top-tabs").tabs();
-                // $("#overview-subtabs").tabs();
-                
-                // Initial clinic val
-                var init_clinic_val = $('input[name="clinic_selected"]').val();
-                this.plotUserRoleUsage(init_clinic_val);
-                this.plotPatientTypesProcessed(init_clinic_val);
-                this.plotImprovementAttempts(init_clinic_val);
-                this.plotWeightChanges(init_clinic_val);
-                this.plotPatientsTreated(init_clinic_val);
-                this.plotAverageChanges(init_clinic_val);
-                this.plotMatchDissimilarity(init_clinic_val);
-            };
-  render() {
-    return (
-      <div> 
-    <head>
-      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
-        <script type= "text/javascript" src="./static/metrics.js"></script>
-        <script type= "text/javascript" src="./static/performance.js"></script>
-        <script type= "text/javascript" src="./static/ease.js"></script>
-    </head>
-      <div id="clinic-select">
-            <input type="radio" name="clinic_selected" value="all" checked="checked" /> All Clinics
-            <input type="radio" name="clinic_selected" value="Institution-0005" /> UCSF
-            <input type="radio" name="clinic_selected" value="Institution-0006" /> Brigham
-            <input type="radio" name="clinic_selected" value="Institution-0008" /> HLCC
-        </div>
-        <div id="overview-subtabs">
-            <ul>
-                <li className="active"><a href="#overview-chm">Customer Health Measurements</a></li>
-                <li><a href="#overview-eou">Ease of Use/Customer Satisfaction</a></li>
-                <li><a href="#overview-spm">Software Performance Measurement</a></li>
-            </ul>
-            <div id="overview-chm">
-               <div id="clinicsPatients" className="left"></div>
-               <div id="treated" className="right"></div>
-               <div id="userRoleUsage"></div>
+    render() {
+        return (
+            <div id="wrapper">
+                <button onClick={this.onClickAll}>All</button>
+                <button onClick={this.onClickUCSF}>UCSF</button>
+                <button onClick={this.onClickHLCC}>HLCC</button>
+                <button onClick={this.onClickBrigham}>Brigham</button>
+                <div></div>
+                <button onClick={this.onClick1}>Customer Health Measurements</button>
+                <button onClick={this.onClick2}>Ease of Use/Customer Satisfaction</button>
+                <button onClick={this.onClick3}>Software Performance Measurement</button>
+                <div>
+                </div>
+                <div id="numberAndTypeOfPatientsProcessedPerClinicDiv" className={this.state.displayNumberAndTypeOfPatientsTreatedPerDayDiv}>{this.displayNumberAndTypeOfPatientsTreatedPerDay()}</div>
+                <div id="numberAndTypeOfPatientsTreatedPerDayDiv" className={this.state.displayTypeOfUserDiv}>2 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="typeOfUserDiv" className={this.state.displayNumberOfTimesWeightsAreChangedDiv}>3 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)} </div>
+                <div id="numberOfTimesWeightsAreChangedDiv" className={this.state.displayNumberOfTimesWeightsAreChangedDiv}>4 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="numberOfWeightChangesPerAnatomicalSiteDiv" className={this.state.displayNumberOfWeightChangesPerAnatomicalSiteDiv}>5 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="numberOfAttemptsOnAverageToImproveAConstantDiv" className={this.state.displayNumberOfAttemptsOnAverageToImproveAConstantDiv}>6 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>
+                <div id="averageDissimilarityAcrossMatchesAvailableDiv" className={this.state.displayAverageDissimilarityAcrossMatchesAvailableDiv}>7 UCSF: {JSON.stringify(this.state.UCSF)}, Brigham: {JSON.stringify(this.state.Brigham)}, HLCC: {JSON.stringify(this.state.HLCC)}</div>    
             </div>
-            <div id="overview-eou">
-                <table>
-                <tr>
-                <td>
-                <div id="weights"></div>
-                </td>
-                <td>
-                <div id="changes"></div>
-                </td>
-                </tr>
-                </table>
-            </div>
-            <div id="overview-spm">
-                <table>
-                <tr>
-                <td>
-                <div id="improvementAttempts"></div>
-                </td>
-                <td>
-                <div id="dissimilarity"></div>
-                </td>
-                </tr>
-                </table>
-            </div>
-      </div>
-      </div>
-    );
-  }
+        )
+     }
 }
 
 export default App;
-
-
-//         //  <script>
-//         //     $(document).ready(function(){
-//         //         $('input[name="clinic_selected"]').on("change", function(){
-//         //             var clinic_val = $(this).val();
-//         //             console.log("Clinic selected: ", clinic_val);
-//         //             plotUserRoleUsage(clinic_val);
-//         //             plotPatientTypesProcessed(clinic_val);
-//         //             plotImprovementAttempts(clinic_val);
-//         //             plotWeightChanges(clinic_val);
-//         //             plotPatientsTreated(clinic_val);
-//         //             plotAverageChanges(clinic_val);
-//         //             plotMatchDissimilarity(clinic_val);
-//         //         });
-//         //         $("#top-tabs").tabs();
-//         //         $("#overview-subtabs").tabs();
-                
-//         //         // Initial clinic val
-//         //         var init_clinic_val = $('input[name="clinic_selected"]').val();
-//         //         plotUserRoleUsage(init_clinic_val);
-//         //         plotPatientTypesProcessed(init_clinic_val);
-//         //         plotImprovementAttempts(init_clinic_val);
-//         //         plotWeightChanges(init_clinic_val);
-//         //         plotPatientsTreated(init_clinic_val);
-//         //         plotAverageChanges(init_clinic_val);
-//         //         plotMatchDissimilarity(init_clinic_val);
-//         //     });
-//         // </script>

@@ -2,6 +2,13 @@ ul {
     background-color: red;
 }
 
+.blank {
+    display: none
+}
+.visible {
+    display: block
+}
+
 
 .left {
   float: left;
