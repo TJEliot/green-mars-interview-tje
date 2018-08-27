@@ -142,7 +142,7 @@ class App extends Component {
                 type: 'bar'
               }
             ]}
-            layout={ {width: 320, height: 240, title: 'Number and Type of Patients Treated Per Day'} }
+            layout={ {title: 'Number and Type of Patients Treated Per Day'} }
           /></div>
         );
     }
@@ -157,7 +157,7 @@ class App extends Component {
                         type: 'pie'
                       }
                     ]}
-                    layout={ {width: 320, height: 240, title: 'Type of User'} }
+                    layout={ {title: 'Type of User'} }
                   /></div>
                 );
     }
@@ -172,7 +172,7 @@ class App extends Component {
                 type: 'bar'
               }
             ]}
-            layout={ {width: 320, height: 240, title: 'Number of Times Weights are Changed'} }
+            layout={ {title: 'Number of Times Weights are Changed'} }
           /></div>
         );}
     displayNumberOfWeightChangesPerAnatomicalSite() {
@@ -185,7 +185,7 @@ class App extends Component {
                 type: 'bar'
               }
             ]}
-            layout={ {width: 320, height: 240, title: 'Number of Weights Changed per anatomical site'} }
+            layout={ {title: 'Number of Weights Changed per anatomical site'} }
           /></div>
         );}
     displayNumberOfAttemptsOnAverageToImproveAConstant() {
@@ -198,7 +198,7 @@ class App extends Component {
                 type: 'bar'
               }
             ]}
-            layout={ {width: 320, height: 240, title: 'Number of Attempts on Average to Improve a Constant'} }
+            layout={ {title: 'Number of Attempts on Average to Improve a Constant'} }
           /></div>
         );}
     displayAverageDissimilarityAcrossMatchesAvailable() {
@@ -211,7 +211,7 @@ class App extends Component {
                 type: 'bar'
               }
             ]}
-            layout={ {width: 320, height: 240, title: 'Average Dissimilarty Across Matches Available'} }
+            layout={ {title: 'Average Dissimilarty Across Matches Available'} }
           /></div>
         );}
 
